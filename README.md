@@ -8,7 +8,7 @@ Written for general use.
 - In its simplest form,
 
 /*
-  int16_t is X, Y, Z;
+  int16_t X, Y, Z;
   
     qmc5883l_ınitializ(MODE_CONTROL_CONTINUOUS, OUTPUT_DATA_RATE_200HZ, FULL_SCALE_2G, OVER_SAMPLE_RATIO_512);
     
