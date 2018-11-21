@@ -1,3 +1,11 @@
+
+
+/*
+Author : Sercan DEMIRHAN
+Created : 21.11.2018
+*/
+
+
 #ifndef QMC5883L_H
 #define QMC5883L_H
 
