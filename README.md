@@ -9,6 +9,7 @@ Written for general use.
 
   int16_t is X, Y, Z;
     qmc5883l_ınitializ(MODE_CONTROL_CONTINUOUS, OUTPUT_DATA_RATE_200HZ, FULL_SCALE_2G, OVER_SAMPLE_RATIO_512);
+    
     qmc5883l_read_dat(&X, &Y, &Z);
 
 
