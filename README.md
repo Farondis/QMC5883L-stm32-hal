@@ -1,0 +1,1 @@
+# QMC5883L-stm32-hal
