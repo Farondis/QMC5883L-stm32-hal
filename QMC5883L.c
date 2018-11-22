@@ -18,9 +18,9 @@ void QMC5883L_Write_Reg(uint8_t reg, uint8_t data)
 
 void QMC5883L_Read_Data(int16_t *MagX,int16_t *MagY,int16_t *MagZ) // (-32768 / +32768)
 {
-	*MagX=(int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_X_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_X_MSB))<<8);
-	*MagY=(int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Y_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Y_MSB))<<8);
-	*MagZ=(int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Z_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Z_MSB))<<8);
+	*MagX=((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_X_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_X_MSB))<<8));
+	*MagY=((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Y_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Y_MSB))<<8));
+	*MagZ=((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Z_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Z_MSB))<<8));
 }
 
 
@@ -71,4 +71,58 @@ _qmc5883l_status QMC5883L_DataIsOverflow()
 	else if((Buffer&0x02)==0X02){return DATA_OVERFLOW;}
 		return NORMAL;
 }
+
+
+void QMC5883L_ResetCalibration() 
+{ 
+	Xmin=Xmax=Ymin=Ymax=0;
+} 
+
+ 
+float QMC5883L_Heading(int16_t Xraw,int16_t Yraw,int16_t Zraw) 
+{ 
+   	float X=Xraw,Y=Yraw,Z=Zraw; 
+   	float Heading;
+
+  	if(X<Xmin) {Xmin = X;} 
+    	  else if(X>Xmax) {Xmax = X;} 
+
+  	if(Y<Ymin) {Ymin = Y;} 
+    	  else if(Y>Ymax) {Ymax = Y;} 
+
+  
+  	if( Xmin==Xmax || Ymin==Ymax ) {return 0.0;} 
+
+ 
+ 	  X -= (Xmax+Xmin)/2; 
+  	Y -= (Ymax+Ymin)/2; 
+    
+  	X = X/(Xmax-Xmin); 
+  	Y = Y/(Ymax-Ymin); 
+
+  	Heading = atan2(Y,X); 
+		//EAST
+	Heading += QMC5883L_DECLINATION_ANGLE;
+	//WEST
+	//Heading -= QMC5883L_DECLINATION_ANGLE;
+		
+	if(Heading <0)
+   	  {Heading += 2*M_PI;}
+	else if(Heading > 2*M_PI)
+   	  {Heading -= 2*M_PI;}
+ 
+ return Heading; 
+} 
+
+
+void QMC5883L_Scale(int16_t *X,int16_t *Y,int16_t *Z)
+{
+	*X*=QMC5883L_SCALE_FACTOR;
+	*Y*=QMC5883L_SCALE_FACTOR;
+	*Z*=QMC5883L_SCALE_FACTOR;
+}
+
+
+
+
 
