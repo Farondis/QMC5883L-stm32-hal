@@ -5,7 +5,6 @@ Author : Sercan DEMIRHAN
 Created : 21.11.2018
 */
 
-
 #ifndef QMC5883L_H
 #define QMC5883L_H
 
@@ -33,7 +32,15 @@ Created : 21.11.2018
 #define QMC5883L_CONFIG_3		0x0B // SET/RESET Period FBR [7:0]
 #define QMC5883L_ID			0x0D
 
+#ifndef M_PI 
+#define M_PI 3.14159265358979323846264338327950288f 
+#endif 
 
+#define QMC5883L_SCALE_FACTOR 		0.732421875f
+#define QMC5883L_CONVERT_GAUSS_2G 	12000.0f
+#define QMC5883L_CONVERT_GAUSS_8G 	3000.0f
+#define QMC5883L_CONVERT_MICROTESLA 	100
+#define QMC5883L_DECLINATION_ANGLE	93.67/1000  // radian, Tekirdag/Turkey
 
 typedef enum STATUS_VARIABLES
 {
@@ -80,7 +87,8 @@ typedef enum INTTERRUPT_VARIABLES
 INTERRUPT_DISABLE,INTERRUPT_ENABLE
 }_qmc5883l_INT;
 
-
+static float Xmin,Xmax,Ymin,Ymax;
+static int16_t X,Y,Z;
 
 extern uint8_t 					QMC5883L_Read_Reg(uint8_t reg);
 extern void 						QMC5883L_Write_Reg(uint8_t reg, uint8_t data);
@@ -92,9 +100,8 @@ extern void 						QMC5883L_Read_Data(int16_t *MagX,int16_t *MagY,int16_t *MagZ);
 extern void 						QMC5883L_Initialize(_qmc5883l_MODE MODE,_qmc5883l_ODR ODR,_qmc5883l_RNG RNG,_qmc5883l_OSR OSR);
 extern void							QMC5883L_Reset(void);
 extern void 						QMC5883L_InterruptConfig(_qmc5883l_INT INT);
-
-
+extern void 		        QMC5883L_ResetCalibration(void); 
+extern float 		        QMC5883L_Heading(int16_t Xraw,int16_t Yraw,int16_t Zraw);
+extern void 		        QMC5883L_Scale(int16_t *X,int16_t *Y,int16_t *Z);
 
 #endif /*_QMC5883L_H_*/
-
-
